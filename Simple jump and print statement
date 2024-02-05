@@ -52,3 +52,14 @@ exit:
     mov rax, 60
     mov rdi, 0
     syscall
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------
+Output for this code - 
+
+Hello world!
+first message
+second message
+third message
+
+[Execution complete with exit code 0]
