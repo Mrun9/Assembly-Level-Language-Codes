@@ -1,0 +1,54 @@
+section .data
+    msg db "Hello world!", 0ah
+    msglen equ $-msg
+
+    msg1 db "first message",0ah
+    msg1len equ $-msg1
+
+    msg2 db "second message",0ah
+    msg2len equ $-msg2
+
+    msg3 db "third message",0ah
+    msg3len equ $-msg3
+
+section .bss
+
+section .text
+    global _start
+
+_start:
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, msg
+    mov rdx, msglen
+    syscall
+    jmp firstmsg
+
+thirdmsg:
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, msg3
+    mov rdx, msg3len
+    syscall
+    jmp exit
+    
+secondmsg:
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, msg2
+    mov rdx, msg2len
+    syscall
+    jmp thirdmsg
+
+firstmsg:
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, msg1
+    mov rdx, msg1len
+    syscall
+    jmp secondmsg
+    
+exit:
+    mov rax, 60
+    mov rdi, 0
+    syscall
