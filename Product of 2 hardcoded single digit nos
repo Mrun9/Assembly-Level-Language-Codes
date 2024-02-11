@@ -1,0 +1,25 @@
+section .data
+    
+section .bss
+    ans resb 01
+
+section .text
+    global _start
+    
+_start:
+    
+    mov al, 02
+    mov bl, 01
+    mul bl
+    add al, 30h
+    mov byte[ans], al
+    
+    mov eax, 4
+    mov ebx, 1
+    mov ecx, ans
+    mov edx, 1
+    int 80h
+    
+    mov eax, 1
+    mov ebx, 0
+    int 80h
