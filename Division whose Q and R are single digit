@@ -1,0 +1,50 @@
+section .data
+    m1 db 0ah,"Quotient is - "
+    l1 equ $-m1
+    m2 db 0ah,"Remainder is - "
+    l2 equ $-m2
+    
+
+section .bss
+    ans resb 01
+    rem resb 01
+    
+section .text
+    global _start
+_start:
+    mov al, 50
+    mov bl, 15
+    mov ah, 0
+    div bl
+    add al, 30h
+    add ah, 30h
+    mov [ans], al
+    mov [rem], ah
+    
+    mov eax, 4
+    mov ebx, 1
+    mov ecx, m1
+    mov edx, l1
+    int 80h
+    
+    mov eax, 4
+    mov ebx, 1
+    mov ecx, ans
+    mov edx, 1
+    int 80h
+    
+    mov eax, 4
+    mov ebx, 1
+    mov ecx, m2
+    mov edx, l2
+    int 80h
+    
+    mov eax, 4
+    mov ebx, 1
+    mov ecx, rem
+    mov edx, 1
+    int 80h
+    
+    mov eax, 1
+    mov ebx, 0
+    int 80h
