@@ -1,0 +1,106 @@
+section .data
+    msg db 0ah,"Enter a number",0ah
+    msglen equ $-msg
+    msg2 db "The number is - ",0ah
+    msg2len equ $-msg2
+    msg3 db 0ah,"Enter a number again",0ah
+    msg3len equ $-msg3
+    msg4 db "The other number is - ",0ah
+    msg4len equ $-msg4
+    msg5 db 0ah,"The answer is : ",0ah
+    msg5len equ $-msg5
+
+section .bss
+    num resb 01
+    num2 resb 01
+    ans resb 01
+    
+section .text
+    global _start
+
+_start:
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, msg
+    mov rdx, msglen
+    syscall
+
+    mov rax, 0
+    mov rdi, 0
+    mov rsi, num
+    mov rdx, 1
+    syscall
+    
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, msg2
+    mov rdx, msg2len
+    syscall
+
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, num
+    mov rdx, 1
+    syscall
+
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, msg3
+    mov rdx, msg3len
+    syscall
+
+    mov rax, 0
+    mov rdi, 0
+    mov rsi, num2
+    mov rdx, 1
+    syscall
+
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, msg4
+    mov rdx, msg4len
+    syscall
+
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, num2
+    mov rdx, 1
+    syscall
+
+    mov al, byte[num]
+    sub al, 30h
+    mov bl, byte[num2]
+    sub bl, 30h
+
+    add al, bl
+    add al, 30h
+    mov [ans], al
+
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, msg5
+    mov rdx, msg5len
+    syscall
+    
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, ans
+    mov rdx, 1
+    syscall
+    
+exit:
+    mov rax, 1
+    mov rdi, 0
+    syscall
+
+
+---------------------------------------------------------------------------------------------------------------------------
+Output - 
+Enter a number
+The number is - 
+2
+Enter a number again
+The other number is - 
+3
+The answer is : 
+5
