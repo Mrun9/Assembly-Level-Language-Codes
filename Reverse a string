@@ -1,0 +1,63 @@
+%macro printf 2
+mov rax, 1
+mov rdi, 1
+mov rsi, %1
+mov rdx, %2
+syscall
+%endmacro
+
+%macro scanf 2
+mov rax, 0
+mov rdi, 0
+mov rsi, %1
+mov rdx, %2
+syscall
+%endmacro 
+
+section .data
+    msg db 0ah,"Enter a string",0ah
+    len equ $-msg
+    msg1 db "Reverse string is ",0ah
+    len1 equ $-msg1
+    strlen db 10
+    
+section .bss
+    str1 resb 10
+    str2 resb 10
+    length resb 1
+
+section .text
+    global _start
+
+_start:
+    printf msg, len 
+    scanf str1, strlen 
+
+    mov [length], rax 
+    mov esi, str1
+    mov edi, str2
+    mov cx, [length]
+    dec cx 
+
+    up:
+    inc esi
+    dec cx 
+    jnz up 
+
+    mov cx, [length]
+
+    up1:
+    mov al, byte[esi]
+    mov byte[edi], al 
+    inc edi 
+    dec esi 
+    dec cx 
+    jnz up1 
+
+    printf msg1, len1
+    printf str2, strlen 
+
+exit:
+    mov rax, 60
+    mov rdi, 0
+    syscall 
