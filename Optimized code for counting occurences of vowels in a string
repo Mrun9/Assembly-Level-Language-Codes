@@ -1,0 +1,110 @@
+%macro printf 2
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, %1
+    mov rdx, %2
+    syscall
+%endmacro
+
+%macro scanf 2
+    mov rax, 0       
+    mov rdi, 0       
+    mov rsi, %1
+    mov rdx, %2
+    syscall
+%endmacro
+
+section .data
+    msg db "enter a string - ", 0ah
+    msglen equ $-msg 
+    strlen db 10
+    exitmsg_a db 0ah, "Number of a - "
+    elen1 equ $-exitmsg_a
+    exitmsg_e db 0ah, "Number of e - "
+    elen2 equ $-exitmsg_e
+    exitmsg_i db 0ah, "Number of i - "
+    elen3 equ $-exitmsg_i
+    exitmsg_o db 0ah, "Number of o - "
+    elen4 equ $-exitmsg_o 
+    exitmsg_u db 0ah, "Number of u - "
+    elen5 equ $-exitmsg_u 
+
+section .bss
+    str1 resb 10 
+    count_a resb 01
+    count_e resb 01
+    count_i resb 01
+    count_o resb 01
+    count_u resb 01
+
+section .text
+    global _start
+
+_start:
+    printf msg, msglen
+    scanf str1, strlen
+    printf str1, strlen 
+
+    mov byte[count_a], 30h
+    mov byte[count_e], 30h
+    mov byte[count_i], 30h
+    mov byte[count_o], 30h
+    mov byte[count_u], 30h
+    mov esi, str1 
+
+loop_main:
+    mov al, byte[esi]
+    cmp al, 0
+    je finalfun
+    cmp al, 'a'
+    je countfuna
+    cmp al, 'e'
+    je countfune
+    cmp al, 'i'
+    je countfuni
+    cmp al, 'o'
+    je countfuno
+    cmp al, 'u'
+    je countfunu
+
+nextletter:
+    inc esi
+    jmp loop_main
+
+countfuna:
+    inc byte[count_a]
+    jmp nextletter
+    
+countfune:
+    inc byte[count_e]
+    jmp nextletter
+
+countfuni:
+    inc byte[count_i]
+    jmp nextletter
+
+countfuno:
+    inc byte[count_o]
+    jmp nextletter
+
+countfunu:
+    inc byte[count_u]
+    jmp nextletter
+
+finalfun:
+    printf exitmsg_a, elen1
+    printf count_a, 1
+    printf exitmsg_e, elen2
+    printf count_e, 1
+    printf exitmsg_i, elen3
+    printf count_i, 1
+    printf exitmsg_o, elen4
+    printf count_o, 1
+    printf exitmsg_u, elen5
+    printf count_u, 1
+    jmp exit
+    
+exit:
+    mov rax, 60
+    mov rdi, 0
+    syscall
