@@ -1,0 +1,91 @@
+%macro printf 2
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, %1
+    mov rdx, %2
+    syscall
+%endmacro
+
+%macro scanf 2
+    mov rax, 0       
+    mov rdi, 0       
+    mov rsi, %1
+    mov rdx, %2
+    syscall
+%endmacro
+
+section .data
+    msg db "enter a string - ", 0ah
+    msglen equ $-msg 
+    strlen db 10
+    exitmsg_a db 0ah, "String ended. Number of a - "
+    elen1 equ $-exitmsg_a
+    exitmsg_e db 0ah, "String ended. Number of e - "
+    elen2 equ $-exitmsg_e
+
+section .bss
+    str1 resb 10 
+    count_a resb 01
+    count_e resb 01
+
+section .text
+    global _start
+
+_start:
+    printf msg, msglen
+    scanf str1, strlen
+    printf str1, strlen 
+
+    mov byte[count_a], 30h
+    mov byte[count_e], 30h
+    mov esi, str1 
+
+loop_main:
+    mov al, byte[esi]
+    cmp al, 0
+    je finalfun
+    cmp al, 'a'
+    jne check_e
+    je countfuna
+
+check_e:
+    cmp al, 'e'
+    jne nextletter
+    je countfune
+
+finalfun:
+    printf exitmsg_a, elen1
+    printf count_a, 1
+    printf exitmsg_e, elen2
+    printf count_e, 1
+    jmp exit
+    
+nextletter:
+    inc esi
+    jmp loop_main
+
+countfuna:
+    mov cl, byte[count_a] 
+    inc cl 
+    mov byte[count_a], cl 
+    jmp nextletter
+    
+countfune:
+    mov cl, byte[count_e] 
+    inc cl 
+    mov byte[count_e], cl 
+    jmp nextletter
+    
+exit:
+    mov rax, 60
+    mov rdi, 0
+    syscall
+
+-------------------------------------------------------------------------------------------------
+
+Output - 
+enter a string - 
+aaaaaaebee
+String ended. Number of a - 6
+String ended. Number of e - 3
+[Execution complete with exit code 0]
