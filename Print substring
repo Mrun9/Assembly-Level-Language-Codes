@@ -1,0 +1,34 @@
+%macro printf 2
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, %1
+    mov rdx, %2
+    syscall
+%endmacro
+
+section .data
+    m1 db 0ah,"abcdefghij"
+    l1 equ $-m1
+    
+section .bss
+
+section .text
+    global _start
+    
+_start:
+    printf m1+3, 6
+
+exit:
+    mov rax, 60
+    mov rdi, 0
+    syscall 
+
+------------------------------------------------------------
+
+Output - 
+cdefgh
+[Execution complete with exit code 0]
+
+
+    
+    
