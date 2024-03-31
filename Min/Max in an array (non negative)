@@ -1,0 +1,80 @@
+%macro printf 2
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, %1
+    mov rdx, %2
+    syscall
+%endmacro
+
+section .data
+    m1 db 0ah,"Maximum in the array - ",0ah
+    l1 equ $-m1
+    m2 db 0ah,"Minimum in the array - ",0ah
+    l2 equ $-m2 
+    line db 0ah
+    len equ $-line 
+    arr db 4,2,8,0,5,7
+    numlen db 01
+    
+section .bss
+    max resb 01
+    min resb 01
+    
+section .text
+    global _start
+    
+_start:
+    ; find max and print it
+    printf m1, l1 
+
+    mov esi, arr
+    mov al, [esi]
+    inc esi
+    mov cl, 06
+    mov bl, al
+
+    again_max:
+    mov dl, [esi]
+    cmp al, dl 
+    jg skip_max 
+    mov al, dl 
+
+    skip_max:
+    inc esi 
+    dec cl 
+    jnz again_max
+
+    add al, 30h
+    mov [max], al 
+
+    printf max, numlen
+    printf line, len 
+
+    ; Find min and print it 
+    printf m2, l2
+
+    mov esi, arr 
+    mov cl, 06
+    inc esi
+
+    again_min:
+    mov dl, [esi]
+    cmp bl, dl 
+    jl skip_min
+    mov bl, dl 
+
+    skip_min:
+    inc esi 
+    dec cl
+    jnz again_min
+
+    add bl, 30h
+    mov [min], bl 
+
+    printf min, numlen
+    
+exit:
+    mov rax, 60
+    mov rdi, 0
+    syscall 
+        
