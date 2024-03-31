@@ -1,0 +1,71 @@
+%macro printf 2
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, %1
+    mov rdx, %2
+    syscall
+%endmacro
+
+%macro scanf 2
+    mov rax, 0
+    mov rdi, 0
+    mov rsi, %1
+    mov rdx, %2
+    syscall
+%endmacro
+
+section .data
+    msg db "Enter a 2-digit number", 0ah
+    msglen equ $-msg 
+    msg1 db 0ah,"Packing done", 0ah
+    len1 equ $-msg1 
+    msg2 db 0ah, "Unpacking done too!",0ah
+    len2 equ $-msg2 
+
+section .bss 
+    num resb 02
+    n resb 01
+    num1 resb 02
+    
+section .text
+    global _start
+
+_start:
+    
+    printf msg, msglen 
+    scanf num, 2
+    printf num, 2
+
+    ; packing 
+    mov esi, num 
+    mov al, byte[esi]
+    sub al, 30h 
+    mov bl, 10
+    mul bl 
+    inc esi 
+    mov cl, byte[esi]
+    sub cl, 30h
+    add al, cl 
+    mov byte[n], al 
+
+    printf msg1, len1
+
+    ; unpacking 
+    mov esi, num1 
+    mov al, byte[n]
+    mov bl, 10 
+    mov ah, 0
+    div bl 
+    add al, 30h
+    mov byte[esi], al 
+    inc esi 
+    add ah, 30h
+    mov byte[esi], ah 
+
+    printf num1, 2
+    printf msg2, len2 
+    
+exit: 
+    mov rax, 60
+    mov rdi, 0
+    syscall
