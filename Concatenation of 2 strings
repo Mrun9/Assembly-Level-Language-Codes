@@ -1,0 +1,70 @@
+%macro printf 2
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, %1
+    mov rdx, %2
+    syscall
+%endmacro
+
+%macro scanf 2
+    mov rax, 0       
+    mov rdi, 0       
+    mov rsi, %1
+    mov rdx, %2
+    syscall
+%endmacro
+
+section .data
+    m1 db 0ah,"Concatenated string - ",0ah
+    l1 equ $-m1 
+    str1 db "Hello",
+    strlen1 equ $-str1 
+    str2 db "World"
+    strlen2 equ $-str2 
+
+section .bss
+    str3 resb 25
+
+section .text
+    global _start
+
+_start:
+    printf m1, l1    
+    mov esi, str1 
+    mov edi, str3 
+
+    mov cl, strlen1 
+    
+fill1:
+    mov al, byte[esi]
+    mov byte[edi], al 
+    inc esi 
+    inc edi 
+    dec cl 
+    jnz fill1 
+
+    mov cl, strlen2 
+    mov esi, str2 
+
+fill2:
+    mov al, byte[esi]
+    mov byte[edi], al 
+    inc esi
+    inc edi 
+    dec cl 
+    jnz fill2 
+
+    printf str3, 25
+     
+
+exit:
+    mov rax, 60
+    mov rdi, 0
+    syscall
+
+-----------------------------------------------------------------------------------
+
+Output - 
+Concatenated string - 
+HelloWorld
+[Execution complete with exit code 0]
