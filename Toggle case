@@ -1,0 +1,89 @@
+%macro printf 2
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, %1
+    mov rdx, %2
+    syscall
+%endmacro
+
+%macro scanf 2
+    mov rax, 0       
+    mov rdi, 0       
+    mov rsi, %1
+    mov rdx, %2
+    syscall
+%endmacro
+
+section .data
+    m1 db 0ah,"Enter a string - ",0ah
+    l1 equ $-m1 
+    m2 db 0ah,"Upper case string - "
+    l2 equ $-m2 
+    m3 db 0ah,"Lower case string - "
+    l3 equ $-m3 
+    m4 db 0ah,"Toggle case - "
+    l4 equ $-m4 
+
+section .bss
+    s1 resb 25
+    s2 resb 25
+    s3 resb 25 
+    s4 resb 25
+
+section .text
+    global _start
+
+_start:
+    printf m1, l1 
+    scanf s1, 25
+    printf s1, 25    
+    
+    ; convert to toggle case 
+    
+    printf m4, l4 
+
+    mov esi, s1 
+    mov edi, s4 
+
+    loop_toggle:
+    cmp al, 0
+    je end 
+    mov al, byte[esi]
+    cmp al, 5Fh
+    jl loop_down
+    jg loop_up
+
+loop_up:
+    mov al, byte[esi]
+    sub al, 20h 
+    mov byte[edi], al
+    inc edi 
+    inc esi 
+    dec cl 
+    jnz loop_toggle
+
+loop_down:
+    mov al, byte[esi]
+    add al, 20h 
+    mov byte[edi], al 
+    inc esi
+    inc edi 
+    dec cl 
+    jnz loop_toggle
+
+end:
+    printf s4, 25 
+
+exit:
+    mov rax, 60
+    mov rdi, 0
+    syscall
+
+---------------------------------------------------------------------------------
+
+Output - 
+Enter a string - 
+aBCdefGHIj
+
+Toggle case - AbcDEFghiJ*              
+[Execution complete with exit code 0]
