@@ -1,0 +1,87 @@
+%macro printf 2
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, %1
+    mov rdx, %2
+    syscall
+%endmacro
+
+%macro scanf 2
+    mov rax, 0       
+    mov rdi, 0       
+    mov rsi, %1
+    mov rdx, %2
+    syscall
+%endmacro
+
+section .data
+    m1 db 0ah,"Enter a string - ",0ah
+    l1 equ $-m1 
+    m2 db 0ah,"Upper case string - "
+    l2 equ $-m2 
+    m3 db 0ah,"Lower case string - "
+    l3 equ $-m3 
+
+section .bss
+    s1 resb 25
+    s2 resb 25
+    s3 resb 25 
+
+section .text
+    global _start
+
+_start:
+    printf m1, l1 
+    scanf s1, 25
+    printf s1, 25    
+
+    printf m2, l2 
+    
+    ; convert to uppercase
+    mov esi, s1 
+    mov edi, s2 
+    mov cl, 25 
+    
+loop_up:
+    mov al, byte[esi]
+    sub al, 20h 
+    mov byte[edi], al
+    inc edi 
+    inc esi 
+    dec cl 
+    jnz loop_up 
+
+    printf s2, 25
+
+    printf m3, l3 
+    
+    mov esi, s2 
+    mov edi, s3 
+    mov cl, 25 
+    
+loop_down:
+    mov al, byte[esi]
+    add al, 20h 
+    mov byte[edi], al 
+    inc esi
+    inc edi 
+    dec cl 
+    jnz loop_down
+
+    printf s3, 25 
+    
+exit:
+    mov rax, 60
+    mov rdi, 0
+    syscall
+
+
+------------------------------------------------------------------------------
+Output - 
+Enter a string - 
+hola ho la    
+
+Upper case string - HOLAHOLA
+Lower case string - hola ho la    
+
+[Execution complete with exit code 0]
