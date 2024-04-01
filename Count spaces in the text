@@ -1,0 +1,67 @@
+%macro printf 2
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, %1
+    mov rdx, %2
+    syscall
+%endmacro
+
+%macro scanf 2
+    mov rax, 0       
+    mov rdi, 0       
+    mov rsi, %1
+    mov rdx, %2
+    syscall
+%endmacro
+
+section .data
+    msg db "enter a string - ", 0ah
+    msglen equ $-msg 
+    strlen db 10
+    exitmsg db "String ended. Number of spaces - ", 0ah
+    elen equ $-exitmsg
+    cntlen db 01
+
+section .bss
+    str1 resb 10 
+    count resb 01
+
+section .text
+    global _start
+
+_start:
+    printf msg, msglen
+    scanf str1, strlen
+    printf str1, strlen 
+
+    mov byte[count], 30h
+    mov esi, str1 
+
+loop_main:
+    mov al, byte[esi]
+    cmp al, 0
+    je finalfun
+    cmp al, ' '
+    jne nextletter
+    je countfun
+    
+finalfun:
+    printf exitmsg, elen
+    printf count, cntlen
+    jmp exit
+    
+nextletter:
+    inc esi
+    jmp loop_main
+
+countfun:
+    mov cl, byte[count] 
+    inc cl 
+    mov byte[count], cl 
+    jmp nextletter
+    
+    
+exit:
+    mov rax, 60
+    mov rdi, 0
+    syscall
