@@ -3,7 +3,7 @@
     mov rdi, 1
     mov rsi, %1
     mov rdx, %2
-    syscall
+    syscall 
 %endmacro
 
 %macro scanf 2
@@ -11,71 +11,91 @@
     mov rdi, 0
     mov rsi, %1
     mov rdx, %2
-    syscall
+    syscall 
 %endmacro
 
 section .data
-    m1 db 0ah,"Addition of 2 numbers is - "
+    m1 db 0ah,"Enter 1st number : "
     l1 equ $-m1 
-    m2 db 0ah,"First number - "
-    l2 equ $-m2
-    m3 db 0ah,"Second number - "
-    l3 equ $-m3
-    m4 db 0ah,"debug"
-    l4 equ $-m4
-    
-section .bss
-    num1 resb 02
-    num2 resb 02
-    ans resb 02
-    tp resb 01
-    up resb 01
-    
+    m2 db 0ah,"Enter 2nd number : "
+    l2 equ $-m2 
+    m3 db 0ah,"Addition is : "
+    l3 equ $-m3 
+
+section .bss 
+    num1 resb 2
+    num2 resb 2
+    n1 resb 01
+    n2 resb 01 
+    ans resb 02 
+
 section .text
     global _start
-    
+
 _start:
-    ; print 1st number
-    printf m2, l2 
+    ; accept and display
+    printf m1, l1 
     scanf num1, 2
     printf num1, 2
-
-    ; print 2nd number
-    printf m3, l3 
+    printf m2, l2 
     scanf num2, 2
     printf num2, 2
 
-    ; add the numbers 
-    printf m1, l1
+    ; pack
     mov esi, num1 
-    mov al, [esi]
+    mov al, byte[esi]
     sub al, 30h
-    mov edi, num2 
-    mov bl, [edi]
-    sub bl, 30h
-
-    add al, bl 
-    add al, 30h
-    mov byte[tp], al
-
+    mov bl, 10 
+    mul bl 
     inc esi 
-    inc edi 
-    mov esi, num1 
-    mov al, [esi]
-    sub al, 30h
-    mov edi, num2 
-    mov bl, [edi]
-    sub bl, 30h
+    mov cl, byte[esi]
+    sub cl, 30h 
+    add al, cl 
+    mov byte[n1], al 
 
+    mov esi, num2  
+    mov al, byte[esi]
+    sub al, 30h
+    mov bl, 10 
+    mul bl 
+    inc esi 
+    mov cl, byte[esi]
+    sub cl, 30h 
+    add al, cl 
+    mov byte[n2], al 
+
+    ; add them 
+
+    mov al, byte[n1]
+    mov bl, byte[n2]
     add al, bl 
+    mov byte[n1], al 
+
+    ; unpack 
+    mov ah, 0
+    mov al, byte[n1]
+    mov bl, 10
+    div bl 
+    mov esi, ans 
     add al, 30h
-    mov byte[up], al
+    mov byte[esi], al 
+    inc esi 
+    add ah, 30h 
+    mov byte[esi], ah 
+
+    ; print result
+    printf m3, l3 
+    printf ans, 2
     
-    printf tp, 1
-    printf up, 1
     
 exit:
     mov rax, 60
     mov rdi, 0
-    syscall 
-        
+    syscall
+
+------------------------------------------------------------------------------------------
+Output - 
+Enter 1st number : 11
+Enter 2nd number : 45
+Addition is : 56
+[Execution complete with exit code 0]            
