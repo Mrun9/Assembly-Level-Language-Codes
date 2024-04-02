@@ -1,0 +1,121 @@
+%macro printf 2
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, %1
+    mov rdx, %2
+    syscall 
+%endmacro
+
+%macro scanf 2
+    mov rax, 0
+    mov rdi, 0
+    mov rsi, %1
+    mov rdx, %2
+    syscall 
+%endmacro
+
+section .data
+    m1 db 0ah,"Enter 1st number : "
+    l1 equ $-m1 
+    m2 db 0ah,"Enter 2nd number : "
+    l2 equ $-m2 
+    m3 db 0ah,"Product is : "
+    l3 equ $-m3 
+
+section .bss 
+    num1 resb 2
+    num2 resb 2
+    n1 resb 01
+    n2 resb 01 
+    ans resb 3
+
+section .text
+    global _start
+
+_start:
+    ; accept and display
+    printf m1, l1 
+    scanf num1, 2
+    printf num1, 2
+    printf m2, l2 
+    scanf num2, 2
+    printf num2, 2
+
+    ; pack
+    mov esi, num1 
+    mov al, byte[esi]
+    sub al, 30h
+    mov bl, 10 
+    mul bl 
+    inc esi 
+    mov cl, byte[esi]
+    sub cl, 30h 
+    add al, cl 
+    mov byte[n1], al 
+
+    mov esi, num2  
+    mov al, byte[esi]
+    sub al, 30h
+    mov bl, 10 
+    mul bl 
+    inc esi 
+    mov cl, byte[esi]
+    sub cl, 30h 
+    add al, cl 
+    mov byte[n2], al 
+
+    ; multiply 
+
+    mov al, byte[n1]
+    mov bl, byte[n2]
+    mul bl 
+    mov byte[n1], al
+    cmp al, 9
+    jg display2 
+    cmp al, 99
+    jg display3 
+    add al, 30h
+    mov byte[ans], al 
+
+display2:
+    mov ah, 0
+    mov al, byte[n1]
+    mov bl, 10
+    div bl 
+    mov esi, ans 
+    add al, 30h 
+    mov byte[esi], al 
+    add ah, 30h
+    mov byte[esi+1], ah 
+
+display3:
+    mov ah, 0
+    mov al, byte[n1]
+    mov bl, 100
+    div bl  
+    add al, 30h 
+    mov byte[esi], al 
+    mov al, ah 
+    mov ah, 0
+    mov bl, 10
+    div bl 
+    add al, 30h 
+    mov byte[esi+1], al 
+    add ah, 30h
+    mov byte[esi+2], ah
+    
+    ; print result
+
+    printf m3, l3 
+    printf ans, 4
+    
+exit:
+    mov rax, 60
+    mov rdi, 0
+    syscall
+----------------------------------------------------------------------
+OUTPUT - 
+
+Enter 1st number : 20
+Enter 2nd number : 12
+Product is : 240
