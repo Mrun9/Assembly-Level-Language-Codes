@@ -1,0 +1,83 @@
+%macro printf 2
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, %1
+    mov rdx, %2
+    syscall
+%endmacro
+
+section .data
+    msg db "Addition of the array is : ", 0ah
+    msglen equ $-msg 
+    arr db 17,88,91,54,5
+    
+
+section .bss 
+    ans resb 03
+    addn resb 01 
+
+section .text
+    global _start
+
+_start:
+    mov byte[addn], 0
+    mov cl, 05
+    mov esi, arr 
+
+main_loop:
+    mov al, byte[esi]
+    mov bl, byte[addn]
+    add al, bl 
+    mov byte[addn], al 
+    inc esi 
+    dec cl 
+    jnz main_loop     
+
+    ; print the addition
+
+    mov al, byte[addn]
+    cmp al, 99
+    jg display3
+    cmp al, 9
+    jg display2 
+    add al, 30h 
+    mov byte[ans], al   
+
+display2:
+    mov ah, 0
+    mov al, byte[addn]
+    mov bl, 10
+    div bl 
+    mov esi, ans 
+    add al, 30h 
+    mov byte[esi], al 
+    add ah, 30h
+    mov byte[esi+1], ah 
+
+display3:
+    mov ah, 0
+    mov al, byte[addn]
+    mov bl, 100
+    div bl
+    mov esi, ans 
+    add al, 30h 
+    mov byte[esi], al 
+    mov al, ah 
+    mov ah, 0
+    mov bl, 10
+    div bl 
+    add al, 30h 
+    mov byte[esi+1], al 
+    add ah, 30h
+    mov byte[esi+2], ah
+
+  printf ans, 3    
+    
+exit:
+    mov rax, 60
+    mov rdi, 0
+    syscall
+-----------------------------------------------------------
+Output - 
+255
+[Execution complete with exit code 0]
