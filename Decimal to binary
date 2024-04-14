@@ -1,0 +1,101 @@
+%macro printf 2
+    mov rax, 1
+    mov rdi, 1
+    mov rsi, %1
+    mov rdx, %2
+    syscall 
+%endmacro
+
+%macro scanf 2
+    mov rax, 0
+    mov rdi, 0
+    mov rsi, %1
+    mov rdx, %2
+    syscall 
+%endmacro
+
+section .data 
+
+    m1 db "Enter a number : "
+    l1 equ $-m1 
+    m2 db 0ah,"Binary form : "
+    l2 equ $-m2 
+    m3 db 0ah,"Original output : "
+    l3 equ $-m3 
+
+section .bss 
+    num resb 02
+    binnum resb 08
+    dummy resb 01
+    rev resb 08
+
+section .text
+    global _start
+    _start:
+    printf m1, l1 
+    scanf num, 02
+    printf num, l1 
+
+    mov esi, num 
+    mov al, byte[esi]
+    sub al, 30h 
+    mov bl, 10 
+    mul bl 
+    inc esi 
+    mov cl, byte[esi]
+    sub cl, 30h
+    add al, cl 
+    mov byte[dummy], al 
+
+    mov cl, 08
+
+    ; binarization 
+    mov edi, binnum
+    
+    up:
+    mov ah, 0
+    mov al, byte[dummy]
+    mov bl, 2
+    div bl  
+    mov byte[dummy], al 
+    add ah, 30h
+    mov byte[edi], ah 
+    inc edi 
+    dec cl 
+    jnz up
+
+    printf m3, l3
+    printf binnum, 8
+
+    ; reverse and print binnum
+    printf m2, l2 
+
+    mov cl, 07
+    mov esi, rev
+    up1:
+    inc esi 
+    dec cl 
+    jnz up1 
+
+    mov cl, 08
+    mov edi, binnum 
+    revloop:
+    mov al, byte[edi]
+    mov byte[esi], al 
+    inc edi 
+    dec esi 
+    dec cl 
+    jnz revloop 
+
+    printf rev, 08
+    
+    exit:
+    mov rax, 60
+    mov rdi, 0
+    syscall 
+--------------------------------------------------------------------
+Output - 
+Enter a number : 46
+Original output : 01110100
+Binary form : 00101110
+[Execution complete with exit code 0]
