@@ -1,0 +1,110 @@
+%macro printf 2
+	mov rax, 1
+	mov rdi, 1
+	mov rsi, %1
+	mov rdx, %2
+	syscall
+%endmacro
+
+%macro scanf 2
+	mov rax, 0
+	mov rdi, 0
+	mov rsi, %1
+	mov rdx, %2
+	syscall
+%endmacro
+
+section .data
+	m1 db 0ah,"Enter 1st number : "
+	l1 equ $-m1
+	m2 db 0ah,"Enter 2nd number : "
+	l2 equ $-m2
+	m3 db 0ah,"Addition is : "
+	l3 equ $-m3
+	m4 db 0ah,"Subtraction is : "
+	l4 equ $-m4
+	m5 db 0ah,"Multiplication is : "
+	l5 equ $-m5
+	m6 db 0ah,"Division quotient is : "
+	l6 equ $-m6
+	m7 db 0ah,"Division remainder is : "
+	l7 equ $-m7	
+	
+section .bss
+	num1 resb 01 ; user inp
+	num2 resb 01
+	n1 resb 01 ; store actual values for 2 digit numbers
+	n2 resb 01
+	addn resb 01
+	subn resb 01
+	muln resb 01
+	quo resb 01
+	rem resb 01
+
+section .text
+	global _start
+	_start:
+	
+	printf m1, l1
+	scanf num1, 2
+	printf m2, l2
+	scanf num2, 2
+	
+	mov al, byte[num1]
+	sub al, 30h
+	mov byte[n1], al
+	mov bl, byte[num2]
+	sub bl, 30h
+	mov byte[n2], bl
+	
+	; addition
+	
+	mov al, byte[n1]
+	mov bl, byte[n2]
+	add al, bl
+	add al, 30h
+	mov byte[addn], al
+	printf m3, l3
+	printf addn, 1
+	
+	; subtraction
+	
+	mov al, byte[n1]
+	mov bl, byte[n2]
+	sub al, bl
+	add al, 30h
+	mov byte[subn], al
+	printf m4, l4
+	printf subn, 1	
+	
+	; multiplication
+	
+	mov al, byte[n1]		
+	mov bl, byte[n2]
+	mul bl
+	add al, 30h
+	mov byte[muln], al
+	printf m5, l5
+	printf muln, 1
+	
+	; division
+	
+	mov ah, 0
+	mov al, byte[n1]
+	mov bl, byte[n2]
+	div bl
+	add al, 30h
+	mov byte[quo], al
+	add ah, 30h
+	mov byte[rem], ah
+	
+	printf m6, l6
+	printf quo, 1
+	
+	printf m7, l7
+	printf rem, 1
+	
+	exit:
+	mov rax, 60
+	mov rdi, 0
+	syscall
